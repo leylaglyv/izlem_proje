@@ -1,63 +1,102 @@
 import React, { useState } from 'react';
+import { Form, Input, Button, Checkbox, Card, Typography, theme } from 'antd';
+import { UserOutlined, LockOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import './Login.css';
 
+const { Title, Text } = Typography;
+
 const Login = ({ userType, onLogin, onBack }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // In a real app, validation would go here.
-        // For now, we simulate a successful login.
-        console.log(`${userType} login attempt: ${username}`);
-        onLogin(username);
-    };
-
+    const [loading, setLoading] = useState(false);
     const isStudent = userType === 'Öğrenci';
+
+    const onFinish = (values) => {
+        setLoading(true);
+        // Simulate network request
+        setTimeout(() => {
+            console.log('Success:', values);
+            onLogin(values.username);
+            setLoading(false);
+        }, 1000);
+    };
 
     return (
         <div className="login-container fade-in">
-            <div className={`login-card ${isStudent ? 'student-theme' : 'teacher-theme'}`}>
+            <Card
+                className={`login-card-antd ${isStudent ? 'student-theme' : 'teacher-theme'}`}
+                bordered={false}
+            >
                 <div className="login-header">
-                    <span className="login-icon">{isStudent ? '🎓' : '👨‍🏫'}</span>
-                    <h2>{userType} Girişi</h2>
-                    <p>Devam etmek için lütfen giriş yapın.</p>
+                    <span className="login-emoji">{isStudent ? '🎓' : '👨‍🏫'}</span>
+                    <Title level={2} style={{ marginBottom: 0, color: '#2D3748' }}>
+                        {userType} Girişi
+                    </Title>
+                    <Text type="secondary">
+                        Devam etmek için bilgilerinizi giriniz.
+                    </Text>
                 </div>
 
-                <form onSubmit={handleSubmit} className="login-form">
-                    <div className="form-group">
-                        <label htmlFor="username">Kullanıcı Adı</label>
-                        <input
-                            type="text"
-                            id="username"
-                            placeholder="Kullanıcı adınızı girin"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
+                <Form
+                    name="normal_login"
+                    className="login-form"
+                    initialValues={{ remember: true }}
+                    onFinish={onFinish}
+                    size="large"
+                    layout="vertical"
+                >
+                    <Form.Item
+                        name="username"
+                        rules={[{ required: true, message: 'Lütfen kullanıcı adınızı girin!' }]}
+                    >
+                        <Input
+                            prefix={<UserOutlined className="site-form-item-icon" />}
+                            placeholder="Kullanıcı Adı"
+                            autoFocus
                         />
-                    </div>
+                    </Form.Item>
 
-                    <div className="form-group">
-                        <label htmlFor="password">Şifre</label>
-                        <input
+                    <Form.Item
+                        name="password"
+                        rules={[{ required: true, message: 'Lütfen şifrenizi girin!' }]}
+                    >
+                        <Input.Password
+                            prefix={<LockOutlined className="site-form-item-icon" />}
                             type="password"
-                            id="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
+                            placeholder="Şifre"
                         />
-                    </div>
+                    </Form.Item>
 
-                    <button type="submit" className="login-button">
-                        Giriş Yap
-                    </button>
-                </form>
+                    <Form.Item>
+                        <Form.Item name="remember" valuePropName="checked" noStyle>
+                            <Checkbox>Beni Hatırla</Checkbox>
+                        </Form.Item>
 
-                <button className="back-link" onClick={onBack}>
-                    ← Ana Sayfaya Dön
-                </button>
-            </div>
+                        <a className="login-form-forgot" href="#forgot" onClick={(e) => e.preventDefault()}>
+                            Şifremi Unuttum
+                        </a>
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            className="login-form-button"
+                            block
+                            loading={loading}
+                        >
+                            Giriş Yap
+                        </Button>
+                    </Form.Item>
+                </Form>
+
+                <Button
+                    type="link"
+                    icon={<ArrowLeftOutlined />}
+                    onClick={onBack}
+                    className="back-button-antd"
+                >
+                    Ana Sayfaya Dön
+                </Button>
+            </Card>
         </div>
     );
 };

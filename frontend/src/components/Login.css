@@ -1,120 +1,175 @@
+/* Container Layout */
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 60vh;
-    /* Adjust as needed */
+    min-height: 85vh;
     padding: 20px;
+    /* Optional: Add a subtle background pattern or gradient here if main body doesn't have one */
 }
 
-.login-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    padding: 50px;
+/* Glassmorphism Card Style - PREMIUM VERSION */
+.login-card-antd {
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    text-align: center;
-    transition: transform 0.3s ease;
+    max-width: 440px;
+    border-radius: 24px !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    box-shadow:
+        0 20px 60px -10px rgba(0, 0, 0, 0.1),
+        0 10px 20px -10px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    /* Inner border for stroke effect */
+    border: none !important;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27), box-shadow 0.4s ease;
+    overflow: hidden;
+    position: relative;
 }
 
-.login-card:hover {
-    transform: translateY(-5px);
+/* Subtle top highlight for 3D feel */
+.login-card-antd::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.9) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    opacity: 0.8;
 }
 
+.login-card-antd:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 30px 80px -15px rgba(0, 0, 0, 0.15),
+        0 15px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styling */
 .login-header {
-    margin-bottom: 30px;
+    text-align: center;
+    margin-bottom: 35px;
+    position: relative;
 }
 
-.login-icon {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 10px;
+/* Emoji Animation */
+@keyframes float {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
 }
 
+.login-emoji {
+    font-size: 4rem;
+    display: inline-block;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.15));
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Typography Polish */
 .login-header h2 {
-    color: #2D3748;
-    font-size: 1.8rem;
-    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+    color: #1a202c;
     font-weight: 800;
 }
 
-.login-header p {
+/* Form Helper Links */
+.login-form-forgot {
+    float: right;
     color: #718096;
     font-size: 0.9rem;
-}
-
-/* User Type Themes */
-.student-theme .login-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.teacher-theme .login-button {
-    background: linear-gradient(135deg, #87CEFA 0%, #2c5282 100%);
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #4A5568;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid rgba(203, 213, 224, 0.6);
-    background: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
-    transition: all 0.2s;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: #87CEFA;
-    box-shadow: 0 0 0 3px rgba(135, 206, 250, 0.2);
-}
-
-.login-button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 50px;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-}
-
-.login-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    filter: brightness(1.1);
-}
-
-.back-link {
-    margin-top: 20px;
-    background: none;
-    border: none;
-    color: #718096;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-decoration: underline;
+    font-weight: 500;
     transition: color 0.2s;
 }
 
-.back-link:hover {
-    color: #4A5568;
+.login-form-forgot:hover {
+    color: #4299e1;
+    text-decoration: underline;
+}
+
+/* Theme-based Button Coloring & Glows */
+.ant-btn-primary {
+    height: 48px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 12px;
+}
+
+/* Student Theme */
+.student-theme .ant-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 10px 20px -5px rgba(118, 75, 162, 0.4);
+}
+
+.student-theme .ant-btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+    box-shadow: 0 15px 25px -5px rgba(118, 75, 162, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Teacher Theme */
+.teacher-theme .ant-btn-primary {
+    background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+    box-shadow: 0 10px 20px -5px rgba(66, 153, 225, 0.4);
+}
+
+.teacher-theme .ant-btn-primary:hover {
+    background: linear-gradient(135deg, #2b6cb0 0%, #4299e1 100%) !important;
+    box-shadow: 0 15px 25px -5px rgba(66, 153, 225, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Input Fields Polish - Modern & Clean */
+.ant-input-affix-wrapper {
+    border-radius: 12px;
+    padding: 10px 16px;
+    border: 2px solid transparent;
+    background: #f7fafc;
+    /* Very light gray background */
+    transition: all 0.3s ease;
+}
+
+.ant-input-affix-wrapper:hover {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+.ant-input-affix-wrapper-focused,
+.ant-input-affix-wrapper:focus {
+    background: #ffffff;
+    border-color: #4299e1 !important;
+    box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.15) !important;
+}
+
+.site-form-item-icon {
+    color: #a0aec0;
+    font-size: 1.1rem;
+}
+
+/* Back Button */
+.back-button-antd {
+    display: block;
+    margin: 20px auto 0;
+    color: #718096;
+    font-weight: 500;
+}
+
+.back-button-antd:hover {
+    color: #2d3748;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
 }

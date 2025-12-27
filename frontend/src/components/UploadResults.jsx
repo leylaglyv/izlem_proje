@@ -51,12 +51,13 @@ function UploadResults() {
 
         try {
             // Şimdilik sadece dosyayı gönderiyoruz, backend güncellenince metadata da ekleriz.
-            const response = await axios.post('http://localhost:8000/analyze', formData, {
+            const response = await axios.post('http://localhost:8001/api/analyze', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                timeout: 180000, // 3 dakika timeout (Büyük dosyalar ve rate limit için)
             });
-            setMessage(`Başarılı! Analiz ID: ${response.data.id}`);
+            setMessage(`Başarılı! Analiz ID: ${response.data.id || 'Kaydedildi'}`);
             setFile(null); // Reset form
             setExamName('');
         } catch (error) {

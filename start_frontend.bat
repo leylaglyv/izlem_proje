@@ -1,5 +1,5 @@
 @echo off
 echo Frontend sunucusu baslatiliyor...
 cd frontend
-npm run dev
+npm.cmd run dev
 pause

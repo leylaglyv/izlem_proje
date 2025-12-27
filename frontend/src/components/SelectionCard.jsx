@@ -6,6 +6,10 @@ const SelectionCard = ({ title, description, icon, onSelect, animationDelay }) =
         <div
             className="selection-card"
             style={{ animationDelay: animationDelay }}
+            onClick={() => {
+                console.log(`${title} kartına tıklandı`);
+                if (onSelect) onSelect();
+            }}
         >
             <div className="card-content">
                 <div className="icon-container">
@@ -15,10 +19,6 @@ const SelectionCard = ({ title, description, icon, onSelect, animationDelay }) =
                 <p className="card-description">{description}</p>
                 <button
                     className="select-button"
-                    onClick={() => {
-                        console.log(`${title} seçildi`);
-                        if (onSelect) onSelect();
-                    }}
                 >
                     Giris Yap
                 </button>

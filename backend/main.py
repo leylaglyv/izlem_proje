@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from services import analyze_pdf, save_results_to_firestore
+from services import analyze_pdf_robust, save_results_to_firestore
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -18,16 +18,18 @@ def read_root():
     return {"message": "AI Analysis Platform Backend is Running!"}
 
 @app.post("/api/analyze")
-async def upload_results(file: UploadFile = File(...)):
+def upload_results(file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
     try:
-        contents = await file.read()
-        results = analyze_pdf(contents)
+        # Read file synchronously since we are in a threadpool
+        contents = file.file.read()
+        results = analyze_pdf_robust(contents)
         
         if not results:
-             raise HTTPException(status_code=500, detail="Failed to analyze PDF or no results found")
+             print("Analysis returned empty results.")
+             raise HTTPException(status_code=500, detail="Öğrenci belgesi okunamadı veya AI servisi yanıt vermedi. Lütfen tekrar deneyin.")
 
         save_results_to_firestore(results)
         
@@ -36,8 +38,11 @@ async def upload_results(file: UploadFile = File(...)):
             "count": len(results),
             "results": results
         }
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Backend Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Sunucu hatası: {str(e)}")
 
 @app.get("/api/results")
 def get_results():

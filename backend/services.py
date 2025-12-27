@@ -1,7 +1,6 @@
 import os
 import fitz  # PyMuPDF
 import PIL.Image
-import io
 import google.generativeai as genai
 from dotenv import load_dotenv
 import json
@@ -31,194 +30,178 @@ class StudentResult(typing_extensions.TypedDict):
     weak_topics: list[str]
     suggestion: str
 
-def analyze_pdf(pdf_bytes: bytes) -> list[StudentResult]:
+def extract_text_from_pdf(pdf_bytes: bytes) -> str:
     """
-    Converts PDF pages to images and sends them to Gemini for analysis.
-    Returns a list of student results.
+    Extracts text from all pages of the PDF.
+    """
+    text_content = ""
+    try:
+        with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+            for page in doc:
+                text_content += page.get_text() + "\n"
+    except Exception as e:
+        print(f"Error extracting text: {e}")
+    return text_content.strip()
+
+    """
+    Analyzes the extracted text using Gemini.
+    """
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    
+    prompt = """
+    Aşağıdaki metin bir sınav sonuç belgesinden (PDF) elde edilmiştir. Bu metni analiz et ve istene verileri JSON formatında çıkar.
+
+    METİN:
+    """ + text_content + """
+
+    İSTENENLER:
+    1. Öğrenci Adı ve Numarasını bul.
+    2. Tablodaki dersleri (Matematik, Türkçe, Fen, Sosyal vb.) bul.
+    3. Her ders için Doğru (D), Yanlış (Y) ve Net (N) sayılarını çıkar.
+    4. **ÖNEMLİ:** Yanlış yapılan soruların hangi TEORİK KONULARA (Örn: Üslü Sayılar, Yazım Kuralları, Elektrik vb.) ait olduğunu tespit et. Eğer belgede konu yazmıyorsa, sorunun içeriğinden veya genel analizden tahmin et.
+    5. 'suggestion' alanına öğrenciye özel, motive edici kısa bir tavsiye yaz.
+
+    ÇIKTI FORMATI (JSON Listesi):
+    [
+        {
+            "student_name": "Ad Soyad",
+            "student_id": "No",
+            "results": [
+                {"subject": "Ders Adı", "D": 30, "Y": 5, "N": 28.75}
+            ],
+            "weak_topics": ["Konu 1 (Yanlış)", "Konu 2 (Boş)"],
+            "suggestion": "Tavsiye metni..."
+        }
+    ]
+    Eğer metin anlamsızsa veya sınav sonucu içermiyorsa boş liste [] döndür.
+    """
+
+    retries = 0
+    max_retries = 3
+    
+    while retries < max_retries:
+        try:
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.GenerationConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            error_str = str(e)
+            if "429" in error_str or "quota" in error_str.lower():
+                print(f"Rate limit exceeded. Retrying in 30 seconds... ({retries+1}/{max_retries})")
+                time.sleep(30)
+                retries += 1
+            else:
+                print(f"Gemini Text Analysis Error: {e}")
+                return []
+    
+    print("Max retries reached for Text Analysis.")
+    return []
+
+def analyze_first_page_image_fallback(pdf_bytes: bytes) -> list[StudentResult]:
+    """
+    Fallback: Converts ONLY the first page to image and analyzes it.
+    Used when text extraction fails.
     """
     try:
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        if len(doc) < 1:
+            return []
+        
+        page = doc.load_page(0)
+        pix = page.get_pixmap()
+        img_data = pix.tobytes("png")
+        
+        # Save temp file for Gemini (Image object needs path or bytes)
+        # Using PIL directly from bytes is safer for memory
+        import io
+        image = PIL.Image.open(io.BytesIO(img_data))
+        
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        prompt = "Bu sınav sonuç belgesini analiz et. Öğrenci adı, ders netleri ve zayıf konuları JSON olarak çıkar."
+        
+        retries = 0
+        max_retries = 3
+        
+        while retries < max_retries:
+            try:
+                response = model.generate_content(
+                    [prompt, image],
+                    generation_config=genai.GenerationConfig(
+                        response_mime_type="application/json"
+                    )
+                )
+                return json.loads(response.text)
+            except Exception as e:
+                error_str = str(e)
+                if "429" in error_str or "quota" in error_str.lower():
+                    print(f"Fallback Image Rate Limit. Retrying in 30 seconds... ({retries+1}/{max_retries})")
+                    time.sleep(30)
+                    retries += 1
+                else:
+                    print(f"Image Fallback Error: {e}")
+                    return []
+        return []
+        
     except Exception as e:
-        print(f"Error opening PDF: {e}")
+        print(f"Image Fallback Error: {e}")
         return []
 
-    images = []
-
-    print(f"Processing PDF with {len(doc)} pages...")
-
-    # Limit page processing to avoid timeouts during debugging if needed
-    for i in range(len(doc)):
-        try:
-            print(f"Processing image for page {i}...")
-            page = doc.load_page(i)
-            # Use 'png' as format
-            pix = page.get_pixmap()
-            img_data = pix.tobytes("png")
-            
-            # Convert to PIL Image
-            img = PIL.Image.open(io.BytesIO(img_data))
-            images.append(img)
-            
-        except Exception as e:
-            print(f"Error processing page {i}: {e}")
-
-    # Gemini Flash Latest (Available and quota-friendly)
-    model = genai.GenerativeModel('gemini-flash-latest')
-
-    prompt = """
-    Bu göründüdeki sınav sonuç belgesini analiz et.
-    
-    Şunları yap:
-    1. Öğrenci Adı ve Numarasını bul.
-    2. Tablodaki dersleri tek tek oku (Matematik, Türkçe, Fen, Sosyal vb.).
-    3. Her ders için Doğru (D), Yanlış (Y) ve Net (N) sayılarını çıkar.
-    4. Yanlış yapılan soruların konu başlıklarını tespit et.
-    5. Öğrenci için 'suggestion' (tavsiye) alanını oluştururken şunlara dikkat et:
-       - ÇOK DETAYLI ve KAPSAMLI bir değerlendirme yaz (En az 3-4 paragraf).
-       - Her ders grubunu (Sayısal, Sözel vb.) ayrı ayrı ele alarak güçlü ve zayıf yönleri belirt.
-       - Yanlış yapılan konulara yönelik spesifik, uygulanabilir çalışma stratejileri öner.
-       - Öğrencinin genel başarı durumunu motive edici, yapıcı ve profesyonel bir koç gibi değerlendir.
-       - Metin akıcı olsun ve öğrenciye doğrudan hitap et (Örn: "Matematikteki başarın gayet iyi ancak...").
-    
-    Çıktı Formatı:
-    JSON formatında bir liste (Array) döndür. (Tek öğrenci olsa bile liste içinde olmalı)
-    
-    Örnek JSON Yapısı:
-    [
-        {
-            "student_name": "Ali Yılmaz",
-            "student_id": "12345",
-            "results": [
-                {"subject": "Türkçe", "D": 30, "Y": 5, "N": 28.75},
-                {"subject": "Matematik", "D": 20, "Y": 2, "N": 19.5}
-            ],
-            "weak_topics": ["Yazım Kuralları", "Üslü Sayılar"],
-            "suggestion": "Ali, genel performansın oldukça etkileyici. Özellikle Türkçe dersindeki paragraf sorularındaki hızın ve isabet oranın dikkat çekici... (Burada uzun ve detaylı analiz devam etmeli)"
-        }
-    ]
+def analyze_pdf_robust(pdf_bytes: bytes) -> list[StudentResult]:
     """
-
-    all_results = []
+    Main analysis function.
+    1. Tries to extract text.
+    2. If text is sufficient, analyzes text.
+    3. If text is empty/insufficient, falls back to first page image analysis.
+    """
+    print("Starting robust analysis...")
     
-    # Process each image individually to respect rate limits
-    for idx, img in enumerate(images):
-        print(f"Sending page {idx + 1}/{len(images)} to Gemini...")
-        try:
-            content = [prompt, img]
-            
-            # Safety settings to avoid blocking content
-            safety_settings = [
-                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-            ]
-
-            response = model.generate_content(
-                content,
-                generation_config=genai.GenerationConfig(
-                    response_mime_type="application/json"
-                    # Removed strict schema to allow more flexibility and avoid 500 errors
-                ),
-                safety_settings=safety_settings
-            )
-            
-            # LOGGING RAW RESPONSE
-            print(f"Raw Gemini Response (Page {idx + 1}):")
-            try:
-                # Store original text
-                response_text = response.text
-                print(response_text.encode('utf-8', errors='replace').decode('utf-8'))
-                
-                # CLEANUP: Remove markdown code blocks if present
-                cleaned_text = response_text.strip()
-                if cleaned_text.startswith("```json"):
-                    cleaned_text = cleaned_text[7:]
-                elif cleaned_text.startswith("```"):
-                    cleaned_text = cleaned_text[3:]
-                
-                if cleaned_text.endswith("```"):
-                    cleaned_text = cleaned_text[:-3]
-                
-                cleaned_text = cleaned_text.strip()
-                
-            except Exception:
-                print("Raw response could not be printed due to encoding issues.")
-                cleaned_text = response.text
-
-            page_results = json.loads(cleaned_text)
-            
-            # Handle both List and Dict (Single object) responses
-            if isinstance(page_results, list):
-                all_results.extend(page_results)
-            elif isinstance(page_results, dict):
-                all_results.append(page_results)
-            else:
-                error_msg = f"Warning: Response for page {idx + 1} was neither list nor dict: {type(page_results)}"
-                print(error_msg)
-                with open("last_error_log.txt", "a", encoding="utf-8") as f:
-                    f.write(error_msg + "\n")
-
-        except Exception as e:
-            error_msg = f"Error processing page {idx + 1}: {str(e)}\nTraceback: {cleaned_text if 'cleaned_text' in locals() else 'No text'}"
-            print(error_msg)
-            with open("last_error_log.txt", "a", encoding="utf-8") as f:
-                f.write(error_msg + "\n")
-            # Continue to next page even if one fails
-        
-        # Rate Limiting: Sleep 5 seconds after each page (user request)
-        if idx < len(images) - 1: # Don't sleep after the last page
-             print("Waiting 5 seconds to respect API limits...")
-             time.sleep(5)
-
-    # If no results found, log it
-    if not all_results:
-        with open("last_error_log.txt", "a", encoding="utf-8") as f:
-            f.write("Analysis finished but no results were collected.\n")
-
-    return all_results
+    # 1. Try Text Extraction
+    text = extract_text_from_pdf(pdf_bytes)
+    print(f"Extracted text length: {len(text)}")
+    
+    # 2. Analyze Text if valid
+    if len(text) > 50: # Arbitrary threshold for "valid content"
+        print("Text found. Analyzing with Gemini (Text Mode)...")
+        results = analyze_text_with_gemini(text)
+        if results:
+            return results
+        print("Text analysis returned empty. Trying fallback...")
+    
+    # 3. Fallback to Image (First Page Only)
+    print("Text extraction failed or insuficient. Falling back to Image Analysis (Page 1)...")
+    return analyze_first_page_image_fallback(pdf_bytes)
 
 def save_results_to_firestore(results: list[StudentResult]):
     """
     Saves the analyzed results to Firestore.
     """
+    if not results:
+        return
+
     batch = db.batch()
     
     for result in results:
-        # Create a new document reference in 'exam_results' collection
-        # We can use student_id as part of the ID or let Firestore auto-generate
-        # Here we'll let Firestore generate, but queryable by student_id
         doc_ref = db.collection("exam_results").document()
-        
-        # Add timestamp
-        # Create a copy for Firestore to avoid modifying the response with non-serializable objects
         doc_data = result.copy()
         doc_data["created_at"] = firestore.SERVER_TIMESTAMP
-        
         batch.set(doc_ref, doc_data)
 
     batch.commit()
     print(f"Saved {len(results)} results to Firestore.")
 
 def get_all_results_from_firestore():
-    """
-    Retrieves all exam results from Firestore, ordered by creation time (newest first).
-    """
     try:
-        # Query the 'exam_results' collection
-        # Order by 'created_at' descending to show newest first
         docs = db.collection("exam_results").order_by("created_at", direction=firestore.Query.DESCENDING).stream()
-        
         results = []
         for doc in docs:
             data = doc.to_dict()
-            # Convert timestamp to string if needed, or let frontend handle it
-            # Firestore timestamps are objects, we might need to serialize them
             if 'created_at' in data and data['created_at']:
                  data['created_at'] = data['created_at'].isoformat()
-            
             results.append(data)
-            
         return results
     except Exception as e:
         print(f"Error fetching results: {e}")

@@ -65,6 +65,38 @@
     transform: translateY(-2px);
 }
 
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4A5568;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    /* Critical for preventing overflow */
+    transition: all 0.2s;
+    background: #f8fafc;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4299E1;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
 /* Table Styles */
 .table-responsive {
     overflow-x: auto;

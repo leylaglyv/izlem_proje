@@ -1,124 +1,175 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import gbbLogo from './assets/gbb.png';
-import SelectionCard from './components/SelectionCard';
-import UploadResults from './components/UploadResults';
 import Login from './components/Login';
 import TeacherDashboard from './components/TeacherDashboard';
 import StudentDashboard from './components/StudentDashboard';
+import ContactPage from './components/ContactPage';
+import AboutPage from './components/AboutPage';
+import LandingPage from './components/LandingPage';
+import { LinkedinOutlined, GithubOutlined, TwitterOutlined, InstagramOutlined, ScanOutlined } from '@ant-design/icons';
 import './App.css';
 
-function App() {
-  // Views: 'landing', 'student-login', 'teacher-login', 'student-dashboard', 'teacher-dashboard', 'contact', 'about'
-  const [activeView, setActiveView] = useState('landing');
-  const [user, setUser] = useState(null); // Validated user
+function AppContent() {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleNavClick = (view, e) => {
-    if (e) e.preventDefault();
-    setActiveView(view);
-  };
+  // Initialize user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const handleLoginSuccess = (username, type) => {
-    setUser({ name: username, type: type });
+    const userData = { name: username, type: type };
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
     if (type === 'Öğrenci') {
-      setActiveView('student-dashboard');
+      navigate('/student-dashboard');
     } else {
-      setActiveView('teacher-dashboard');
+      navigate('/teacher-dashboard');
     }
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    navigate('/');
   };
 
   return (
     <div className="app-container">
       {/* Header Section */}
       <header className="main-header">
-        <div className="header-left-spacer"></div>
+        <div className="header-left-spacer">
+          <Link to="/" className="brand-logo-link">
+            <div className="brand-logo">
+              <ScanOutlined className="brand-icon" />
+              <span className="brand-text">İZLEM</span>
+            </div>
+          </Link>
+        </div>
         <nav className="header-nav">
-          <a href="#" className="nav-item" onClick={(e) => handleNavClick('landing', e)}>Ana Sayfa</a>
-          <a href="#" className="nav-item" onClick={(e) => handleNavClick('student-login', e)}>Öğrenci</a>
-          <a href="#" className="nav-item" onClick={(e) => handleNavClick('teacher-login', e)}>Öğretmen</a>
-          <a href="#" className="nav-item" onClick={(e) => handleNavClick('contact', e)}>İletişim</a>
-          <a href="#" className="nav-item" onClick={(e) => handleNavClick('about', e)}>Hakkımızda</a>
+          <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>Ana Sayfa</Link>
+          <Link to="/student-login" className={`nav-item ${location.pathname === '/student-login' ? 'active' : ''}`}>Öğrenci</Link>
+          <Link to="/teacher-login" className={`nav-item ${location.pathname === '/teacher-login' ? 'active' : ''}`}>Öğretmen</Link>
+          <Link to="/contact" className={`nav-item ${location.pathname === '/contact' ? 'active' : ''}`}>İletişim</Link>
+          <Link to="/about" className={`nav-item ${location.pathname === '/about' ? 'active' : ''}`}>Hakkımızda</Link>
         </nav>
         <div className="header-subtitle-container">
           <img src={gbbLogo} alt="GBB Logo" className="gbb-logo" />
-          <span className="gbb-text">Gaziantep Büyükşehir Belediyesi<br />Destekleri ile</span>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="main-content">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
 
-        {/* LANDING PAGE */}
-        {activeView === 'landing' && (
-          <div className="cards-container fade-in">
-            <SelectionCard
-              title="Öğrenci"
-              description="Sınav sonuçlarını keşfet, eksiklerini gör ve sana özel çalışma planı ile hedeflerine ulaş."
-              icon={<span role="img" aria-label="student">🎓</span>}
-              animationDelay="0s"
-              onSelect={() => setActiveView('student-login')}
-            />
-
-            <SelectionCard
-              title="Öğretmen"
-              description="Sınıfının durumunu analiz et, öğrencilerinin gelişimini takip et ve onlara rehberlik et."
-              icon={<span role="img" aria-label="teacher">👨‍🏫</span>}
-              animationDelay="1.5s"
-              onSelect={() => setActiveView('teacher-login')}
-            />
-          </div>
-        )}
-
-        {/* LOGIN SCREENS */}
-        {(activeView === 'student-login' || activeView === 'teacher-login') && (
-          <Login
-            userType={activeView === 'student-login' ? 'Öğrenci' : 'Öğretmen'}
-            onLogin={(username) => handleLoginSuccess(username, activeView === 'student-login' ? 'Öğrenci' : 'Öğretmen')}
-            onBack={() => setActiveView('landing')}
+          <Route
+            path="/student-login"
+            element={
+              <Login
+                userType="Öğrenci"
+                onLogin={(username) => handleLoginSuccess(username, 'Öğrenci')}
+                onBack={() => navigate('/')}
+              />
+            }
           />
-        )}
 
-        {/* DASHBOARDS */}
-        {activeView === 'teacher-dashboard' && (
-          <TeacherDashboard user={user} onLogout={() => setActiveView('landing')} />
-        )}
+          <Route
+            path="/teacher-login"
+            element={
+              <Login
+                userType="Öğretmen"
+                onLogin={(username) => handleLoginSuccess(username, 'Öğretmen')}
+                onBack={() => navigate('/')}
+              />
+            }
+          />
 
-        {activeView === 'student-dashboard' && (
-          <StudentDashboard user={user} onLogout={() => setActiveView('landing')} />
-        )}
+          <Route
+            path="/teacher-dashboard"
+            element={
+              user && user.type === 'Öğretmen' ? (
+                <TeacherDashboard user={user} onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/teacher-login" replace />
+              )
+            }
+          />
 
-        {/* INFO PAGES */}
-        {activeView === 'contact' && (
-          <div className="page-container fade-in">
-            <h2 className="page-title">İletişim</h2>
-            <div className="content-card">
-              <p>Bize ulaşmak için aşağıdaki kanalları kullanabilirsiniz.</p>
-              <br />
-              <p><strong>E-posta:</strong> info@antigravity.com</p>
-              <p><strong>Adres:</strong> Gaziantep Büyükşehir Belediyesi</p>
-            </div>
-            <button className="back-button" onClick={() => setActiveView('landing')}>Anasayfaya Dön</button>
-          </div>
-        )}
+          <Route
+            path="/student-dashboard"
+            element={
+              user && user.type === 'Öğrenci' ? (
+                <StudentDashboard user={user} onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/student-login" replace />
+              )
+            }
+          />
 
-        {activeView === 'about' && (
-          <div className="page-container fade-in">
-            <h2 className="page-title">Hakkımızda</h2>
-            <div className="content-card">
-              <p>Antigravity projesi, Gaziantep Büyükşehir Belediyesi desteğiyle öğrencilerin sınav başarılarını artırmak için geliştirilmiş yapay zeka destekli bir analiz platformudur.</p>
-              <br />
-              <p>Amacımız, eğitimde fırsat eşitliği sağlamak ve her öğrenciye özel rehberlik sunmaktır.</p>
-            </div>
-            <button className="back-button" onClick={() => setActiveView('landing')}>Anasayfaya Dön</button>
-          </div>
-        )}
+          <Route
+            path="/contact"
+            element={
+              <div className="fade-in" style={{ width: '100%' }}>
+                <ContactPage />
+                <div style={{ textAlign: 'center', paddingBottom: '40px' }}>
+                  <button className="back-button" onClick={() => navigate('/')}>Anasayfaya Dön</button>
+                </div>
+              </div>
+            }
+          />
 
+          <Route
+            path="/about"
+            element={
+              <div className="fade-in" style={{ width: '100%' }}>
+                <AboutPage />
+                <div style={{ textAlign: 'center', paddingBottom: '40px' }}>
+                  <button className="back-button" onClick={() => navigate('/')}>Anasayfaya Dön</button>
+                </div>
+              </div>
+            }
+          />
+        </Routes>
       </main>
 
       {/* Footer Section */}
       <footer className="main-footer">
-        © {new Date().getFullYear()} Antigravity Projesi - Gaziantep Büyükşehir Belediyesi Pilot Uygulamasıdır.
+        <div className="footer-content">
+          <div className="footer-social">
+            <a href="#" className="social-icon"><LinkedinOutlined /></a>
+            <a href="#" className="social-icon"><GithubOutlined /></a>
+            <a href="#" className="social-icon"><TwitterOutlined /></a>
+            <a href="#" className="social-icon"><InstagramOutlined /></a>
+          </div>
+
+          <div className="footer-nav">
+            <Link to="/about">Hakkımızda</Link>
+            <Link to="#">Hizmetler</Link>
+            <Link to="#">Projeler</Link>
+            <Link to="/contact">İletişim</Link>
+          </div>
+        </div>
+
+        <div className="footer-copyright">
+          © {new Date().getFullYear()} GWW tarafından geliştirilmiştir
+        </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 

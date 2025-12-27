@@ -21,9 +21,23 @@
 }
 
 .icon-container {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    color: #87CEFA;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 140px;
+}
+
+.card-icon {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.selection-card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .card-title {
