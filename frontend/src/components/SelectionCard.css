@@ -1,0 +1,73 @@
+.selection-card {
+    background: rgba(255, 255, 255, 0.8);
+    /* White with opacity */
+    backdrop-filter: blur(10px);
+    /* Glassmorphism blur */
+    border-radius: 20px;
+    padding: 40px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    animation: float 6s ease-in-out infinite;
+    cursor: pointer;
+}
+
+.selection-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.icon-container {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: #87CEFA;
+}
+
+.card-title {
+    color: #2D3748;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.card-description {
+    color: #718096;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.select-button {
+    background-color: #87CEFA;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.select-button:hover {
+    background-color: #5bb6f7;
+}
+
+/* Float Animation */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}

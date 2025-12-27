@@ -1,0 +1,188 @@
+Error processing page 1: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Traceback: No text
+Analysis finished but no results were collected.
+Error processing page 3: Expecting ',' delimiter: line 99 column 2570 (char 4383)
+Traceback: [
+  {
+    "student_name": "İREM NAZ DEMİR",
+    "student_id": "964",
+    "results": [
+      {
+        "subject": "Türkçe",
+        "D": 32,
+        "Y": 8,
+        "N": 30.00
+      },
+      {
+        "subject": "Tarih-1",
+        "D": 3,
+        "Y": 0,
+        "N": 3.00
+      },
+      {
+        "subject": "Coğrafya-1",
+        "D": 2,
+        "Y": 2,
+        "N": 1.50
+      },
+      {
+        "subject": "Felsefe",
+        "D": 4,
+        "Y": 1,
+        "N": 3.75
+      },
+      {
+        "subject": "Din Kül. ve Ahl. Bil.",
+        "D": 3,
+        "Y": 1,
+        "N": 2.75
+      },
+      {
+        "subject": "TYT Sosyal",
+        "D": 12,
+        "Y": 4,
+        "N": 11.00
+      },
+      {
+        "subject": "Matematik-1",
+        "D": 7,
+        "Y": 3,
+        "N": 6.25
+      },
+      {
+        "subject": "Geometri",
+        "D": 0,
+        "Y": 0,
+        "N": 0.00
+      },
+      {
+        "subject": "TYT Matematik",
+        "D": 7,
+        "Y": 3,
+        "N": 6.25
+      },
+      {
+        "subject": "Fizik",
+        "D": 0,
+        "Y": 1,
+        "N": -0.25
+      },
+      {
+        "subject": "Kimya",
+        "D": 2,
+        "Y": 0,
+        "N": 2.00
+      },
+      {
+        "subject": "Biyoloji",
+        "D": 2,
+        "Y": 0,
+        "N": 2.00
+      },
+      {
+        "subject": "TYT Fen",
+        "D": 4,
+        "Y": 1,
+        "N": 3.75
+      }
+    ],
+    "weak_topics": [
+      "Sözcükte Anlam",
+      "Cümledeki Anlam ve Yorumu",
+      "Söz Öbeklerinde Anlam",
+      "Yazım Kuralları",
+      "Noktalama İşaretleri",
+      "Paragrafta Anlatım Teknikleri / Yardımcı Düşünceler",
+      "Dünya'nın Şekli ve Hareketleri (Coğrafya)",
+      "Felsefeyi Tanıma",
+      "Sayı Problemleri",
+      "Rutin Olmayan Problemler",
+      "Yaş Problemleri",
+      "Kaldırma Kuvveti (Fizik)"
+    ],
+    "suggestion": "Sevgili İrem Naz, TYT TG TYT 1 deneme sınavındaki genel performansını detaylıca analiz ettim. 294.592 puan ve 51.00 netlik sonucun, özellikle Sözel ve Sosyal Bilimler alanlarındaki güçlü temelini gösteriyor. Ancak, hedeflerine ulaşman için Sayısal (Matematik ve Fen) alanlarına acilen ve yoğun bir şekilde odaklanmalısın. Genel ortalamaların oldukça üzerinde bir Sözel başarıya sahip olman motivasyon kaynağın olmalı.\n\n**Sözel ve Sosyal Alanlardaki Durumun:** Türkçede 30 net ile mükemmel bir başarı sergiledin; bu, okuma ve anlama becerilerinin ne kadar gelişmiş olduğunu kanıtlıyor. Tarih ve Felsefe netlerin de gayet yerinde. Ancak, bu yüksek başarıyı sürdürürken Türkçe’deki 8 yanlışını incelemeliyiz. Yanlışların Yazım Kuralları, Noktalama İşaretleri gibi Dil Bilgisi konularının yanı sıra Sözcük ve Cümle Anlamı kısımlarında yoğunlaşmış. Bu hatalar genellikle bilgi eksikliğinden ziyade, hızlı çözme ve dikkat hatalarından kaynaklanabilir. Türkçe netini 35+ seviyesine çıkarmak için her gün 15-20 dakikanı yalnızca Dil Bilgisi (özellikle Yazım ve Noktalama) tekrarına ayırmalı ve sürekli olarak bu konulardan deneme tarzında sorular çözmelisin. Sosyal bilimlerdeki 11 net iyi bir seviyede olsa da, Coğrafya'da kaçan 2 net ve Felsefe'deki 1 yanlışını, spesifik konu tekrarlarıyla hızlıca tam nete çevirebilirsin.\n\n**Kritik Alan: Sayısal Performansın (Matematik ve Fen):** Sayısal derslerdeki netlerin, sınıf ve genel ortalamanın belirgin şekilde altında kalmıştır. TYT Matematik'te 40 soruda sadece 6.25 net elde etmen, bu alandaki temel eksikliklerinin ciddiyetini ortaya koyuyor. Yanlış yaptığın konular (Sayı, Yaş ve Rutin Olmayan Problemler) TYT'nin merkezini oluşturur. Stratejin, öncelikle temel kavramlar ve rasyonel sayılar gibi en temel konuları sağlamlaştırmak, ardından her hafta belirlenen iki problem tipine yoğunlaşarak bol bol pratik yapmaktır. **Geometri alanında 0 net yapman kabul edilemez; bu alanı tamamen göz ardı etmişsin.** Geometriye mutlaka üçgenler ve temel geometrik kavramlarla başlayarak günlük minimum 1 saat ayırmalısın, çünkü Geometri TYT'de kolay net kazanma potansiyeli sunar.\n\nFen Bilimleri'nde ise 3.75 net ile benzer bir tablo var. Kimya ve Biyolojide doğru yapman güzel bir başlangıç olsa da, Fizik'teki (Kaldırma Kuvveti) tek hatan sonucunda netinin negatif çıkması, bu dersin ihmal edildiğini gösterir. Fizik ve Geometri senin için şu anda en büyük gelişim potansiyeli taşıyan alanlardır. Çalışma programının %60'ını Sayısal konulara ayırmalısın. Her akşam 30 Fen sorusu çözmeli ve yanlış yaptığın "Kaldırma Kuvveti" gibi konuların konu anlatım videolarını izleyip ardından o konuya özgü soru çözümüne geçmelisin. Başarılı bir sözel temelin var; şimdi aynı disiplin ve azmi Sayısal konulara aktardığında, genel başarının hızla yükseleceğinden emin olabilirsin."
+  }
+]
+Error processing page 5: Invalid control character at: line 74 column 490 (char 1860)
+Traceback: [
+  {
+    "student_name": "MENEKŞE GÜNDÜZ",
+    "student_id": "1043",
+    "results": [
+      {
+        "subject": "Türkçe",
+        "D": 27,
+        "Y": 11,
+        "N": 24.25
+      },
+      {
+        "subject": "Tarih-1",
+        "D": 0,
+        "Y": 0,
+        "N": 0.00
+      },
+      {
+        "subject": "Coğrafya-1",
+        "D": 0,
+        "Y": 0,
+        "N": 0.00
+      },
+      {
+        "subject": "Felsefe",
+        "D": 0,
+        "Y": 0,
+        "N": 0.00
+      },
+      {
+        "subject": "Din Kül. ve Ahl. Bil.",
+        "D": 3,
+        "Y": 2,
+        "N": 2.50
+      },
+      {
+        "subject": "TYT Sosyal (Toplam)",
+        "D": 3,
+        "Y": 2,
+        "N": 2.50
+      },
+      {
+        "subject": "Matematik-1",
+        "D": 11,
+        "Y": 2,
+        "N": 10.50
+      },
+      {
+        "subject": "Geometri",
+        "D": 1,
+        "Y": 0,
+        "N": 1.00
+      },
+      {
+        "subject": "TYT Matematik (Toplam)",
+        "D": 12,
+        "Y": 2,
+        "N": 11.50
+      }
+    ],
+    "weak_topics": [
+      "Sözcükte Anlam",
+      "Cümle Anlamı ve Yorumu",
+      "Paragrafta Yapı",
+      "Yazım Kuralları",
+      "Noktalama İşaretleri",
+      "Paragrafta Ana Düşünce",
+      "Paragrafta Yardımcı Düşünceler",
+      "İslam ve İbadet (Din Kül.)",
+      "Ahlak (Din Kül.)",
+      "Sayı Problemleri",
+      "Kesir Problemleri"
+    ],
+    "suggestion": "Menekşe, öncelikle bu deneme sınavındaki gayretin için seni tebrik ederim. 120 soruda elde ettiğin 38.25 netlik sonuç, kurum ve genel ortalamanın hemen altında kalsa da, özellikle TYT Türkçe alanında (24.25 net) gösterdiğin güçlü performans, hedeflerin için sağlam bir temel oluşturuyor. Toplamda 42 doğru yapman, konulara hakimiyet potansiyelinin yüksek olduğunu gösteriyor. Ancak, bu potansiyeli net sayısına dönüştürmek için disiplinli bir stratejiye ihtiyacımız var.
+
+Sözel alandaki değerlendirmene bakıldığında, Türkçe dersinde 27 doğruya karşılık 11 yanlışın bulunması oldukça düşündürücü. Yanlışlarının yoğunlaştığı Paragrafta Yardımcı Düşünceler, Yazım ve Noktalama kuralları gibi konularda bilgi eksikliğinden ziyade, sınav temposundan kaynaklanan dikkat hataları yaptığını görüyoruz. Bu yanlışları telafi etmek, net artışında en hızlı etkiyi yaratacaktır. Sosyal Bilimler grubunda ise Tarih-1, Coğrafya-1 ve Felsefe derslerinden hiç net çıkaramamış olman (0 net), bu konulara hiç başlanmadığını veya zaman yönetimi nedeniyle atlandığını gösteriyor. TYT Sosyal, az konu çalışmasıyla hızlı sonuç alınabilecek 20 soruluk önemli bir bölümdür. Bu alanı ihmal etmek yerine, öncelikli olarak Tarih ve Coğrafya'nın temel TYT konularını hızlıca öğrenme programına dahil etmelisin. Din Kültürü'ndeki 2 yanlışın ise (İslam ve İbadet, Ahlak) ufak tefek konu eksikliklerini gösteriyor, bu kısımlar kolayca kapatılabilir.
+
+Sayısal performansa geçtiğimizde, TYT Matematik'teki 11.50 net (12 doğru, 2 yanlış) ortalama düzeyde bir başarı sergilemen anlamına geliyor. Ancak bu 2 yanlışın, Sayı ve Kesir Problemleri gibi TYT matematiğinin temelini oluşturan konulardan gelmesi, işlem yeteneğini ve temel problem çözme stratejilerini daha çok geliştirmemiz gerektiğini gösteriyor. Bu konulardaki eksiklikler, ilerleyen süreçte daha karmaşık konuları anlamanı zorlaştırabilir. Bu nedenle, matematikte ilerlemeden önce Temel Kavramlar, Denklemler ve Problemler (özellikle hız, karışım, işçi gibi) konularını sağlamlaştırmaya odaklanmalısın. Geometri’den sadece 1 net (1 doğru, 0 yanlış) çıkarman ise bu alana neredeyse hiç zaman ayırmadığını gösteriyor. Başlangıç seviyesinde, özellikle Geometrik Kavramlar, Doğruda Açılar ve Üçgenler konularından başlayarak düzenli pratik yapman zorunludur.
+
+Özetle, Menekşe, genel başarını yükseltmek için iki ana strateji izlemelisin: Birincisi, Türkçe ve Matematikteki dikkat hatalarını minimize etmek için her gün belirli sayıda (20-30 adet) dikkat seti çözmek ve yanlış analizi yapmak. İkincisi, ihmal ettiğin veya sıfır çektiğin Sosyal Bilimler konularına (Tarih, Coğrafya, Felsefe) hızla temelden başlamak. Programının yaklaşık %60’ını Matematik ve Sosyal Bilimler temel konularını öğrenmeye ve pekiştirmeye ayırırsan, bir sonraki denemede netlerini 50’nin üzerine taşıyarak büyük bir sıçrama yapabilirsin. Unutma, başarı istikrar ister; odak noktanı net belirle ve hedefine doğru azimle ilerle!"
+}
+]
