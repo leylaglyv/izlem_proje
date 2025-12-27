@@ -35,19 +35,28 @@
 
 .nav-item {
   text-decoration: none;
-  color: #4A5568;
+  color: #2D3748;
+  /* Darker text */
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  /* Rounded pill shape */
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.5);
+  /* Semi-transparent white */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .nav-item:hover {
-  color: #87CEFA;
-  background-color: rgba(135, 206, 250, 0.1);
-  transform: translateY(-1px);
+  background: rgba(135, 206, 250, 0.8);
+  /* Blueish on hover */
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(135, 206, 250, 0.3);
+  border-color: rgba(135, 206, 250, 0.8);
 }
 
 .header-subtitle-container {
@@ -125,4 +134,99 @@
     flex-direction: column;
     gap: 30px;
   }
+}
+
+/* Page Containers */
+.page-container {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  color: #2D3748;
+  margin-bottom: 30px;
+  font-weight: 800;
+}
+
+.content-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  line-height: 1.8;
+  color: #4A5568;
+  font-size: 1.1rem;
+}
+
+.back-button {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  background: transparent;
+  border: 2px solid #87CEFA;
+  color: #87CEFA;
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: #87CEFA;
+  color: white;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dashboard Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: white;
+  padding: 15px 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-header h3 {
+  margin: 0;
+  color: #2D3748;
+}
+
+.logout-btn {
+  background: #FEB2B2;
+  color: #C53030;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #FC8181;
+  color: white;
 }

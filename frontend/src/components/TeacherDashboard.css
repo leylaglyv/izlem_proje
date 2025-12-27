@@ -1,0 +1,104 @@
+/* Teacher Dashboard Specific Styles */
+.dashboard-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.welcome-text {
+    font-weight: 700;
+    color: #2D3748;
+    font-size: 1.1rem;
+}
+
+.dashboard-nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+.dash-nav-btn {
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #718096;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dash-nav-btn:hover {
+    background: rgba(135, 206, 250, 0.1);
+    color: #87CEFA;
+}
+
+.dash-nav-btn.active {
+    background: #87CEFA;
+    color: white;
+    box-shadow: 0 4px 6px rgba(135, 206, 250, 0.3);
+}
+
+/* Welcome Card */
+.welcome-card {
+    text-align: center;
+    padding: 40px;
+}
+
+.welcome-card h1 {
+    color: #2D3748;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.quick-actions {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.action-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    width: 250px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.action-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.action-card .icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.action-card h3 {
+    color: #2D3748;
+    margin-bottom: 10px;
+}
+
+.action-card p {
+    color: #718096;
+    font-size: 0.9rem;
+}
