@@ -199,3 +199,27 @@ def save_results_to_firestore(results: list[StudentResult]):
 
     batch.commit()
     print(f"Saved {len(results)} results to Firestore.")
+
+def get_all_results_from_firestore():
+    """
+    Retrieves all exam results from Firestore, ordered by creation time (newest first).
+    """
+    try:
+        # Query the 'exam_results' collection
+        # Order by 'created_at' descending to show newest first
+        docs = db.collection("exam_results").order_by("created_at", direction=firestore.Query.DESCENDING).stream()
+        
+        results = []
+        for doc in docs:
+            data = doc.to_dict()
+            # Convert timestamp to string if needed, or let frontend handle it
+            # Firestore timestamps are objects, we might need to serialize them
+            if 'created_at' in data and data['created_at']:
+                 data['created_at'] = data['created_at'].isoformat()
+            
+            results.append(data)
+            
+        return results
+    except Exception as e:
+        print(f"Error fetching results: {e}")
+        return []

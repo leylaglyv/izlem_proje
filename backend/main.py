@@ -38,3 +38,9 @@ async def upload_results(file: UploadFile = File(...)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/results")
+def get_results():
+    from services import get_all_results_from_firestore
+    results = get_all_results_from_firestore()
+    return results

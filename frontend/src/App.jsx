@@ -4,6 +4,7 @@ import SelectionCard from './components/SelectionCard';
 import UploadResults from './components/UploadResults';
 import Login from './components/Login';
 import TeacherDashboard from './components/TeacherDashboard';
+import StudentDashboard from './components/StudentDashboard';
 import './App.css';
 
 function App() {
@@ -82,18 +83,7 @@ function App() {
         )}
 
         {activeView === 'student-dashboard' && (
-          <div className="page-container fade-in">
-            <div className="dashboard-header">
-              <h3>Hoş geldin, {user?.name} (Öğrenci)</h3>
-              <button className="logout-btn" onClick={() => setActiveView('landing')}>Çıkış Yap</button>
-            </div>
-            <div className="content-card">
-              <h2>Öğrenci Paneli</h2>
-              <p>Burası analiz sonuçlarının ve performans grafiklerinin gösterileceği alandır.</p>
-              <br />
-              <p><em>(Geliştirme aşamasında...)</em></p>
-            </div>
-          </div>
+          <StudentDashboard user={user} onLogout={() => setActiveView('landing')} />
         )}
 
         {/* INFO PAGES */}

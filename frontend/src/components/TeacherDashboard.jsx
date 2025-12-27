@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import UploadResults from './UploadResults';
 import ClassManagement from './ClassManagement';
 import './TeacherDashboard.css';
@@ -6,6 +7,26 @@ import '../App.css'; // Re-using existing styles, can be separated if needed
 
 const TeacherDashboard = ({ user, onLogout }) => {
     const [activeTab, setActiveTab] = useState('home'); // 'home', 'upload', 'past', 'class'
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const fetchResults = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('http://localhost:8000/api/results');
+            setResults(response.data);
+        } catch (error) {
+            console.error("Error fetching results:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === 'past') {
+            fetchResults();
+        }
+    }, [activeTab]);
 
     return (
         <div className="dashboard-container fade-in">
@@ -68,10 +89,47 @@ const TeacherDashboard = ({ user, onLogout }) => {
 
                 {activeTab === 'past' && (
                     <div className="content-card fade-in">
-                        <h2>Önceki Analizler</h2>
-                        <p>Geçmişte yüklediğiniz sınav analizleri burada listelenecek.</p>
-                        <br />
-                        <p><em>(Yapım aşamasında...)</em></p>
+                        <div className="card-header-row">
+                            <h2>Önceki Analizler</h2>
+                            <button className="refresh-btn" onClick={fetchResults}>🔄 Yenile</button>
+                        </div>
+                        <p>Geçmişte yüklediğiniz sınav analizleri burada listelenmektedir.</p>
+
+                        {loading ? (
+                            <div className="loading-state">Yükleniyor...</div>
+                        ) : results.length === 0 ? (
+                            <div className="empty-state">Henüz hiç analiz bulunmuyor.</div>
+                        ) : (
+                            <div className="results-grid">
+                                {results.map((result, index) => (
+                                    <div key={index} className="result-card fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                                        <div className="result-header">
+                                            <h3>{result.student_name || 'İsimsiz Öğrenci'}</h3>
+                                            <span className="result-date">
+                                                {result.created_at ? new Date(result.created_at).toLocaleDateString('tr-TR') : 'Tarih Yok'}
+                                            </span>
+                                        </div>
+                                        <div className="result-body">
+                                            <p><strong>Öğrenci No:</strong> {result.student_id || '-'}</p>
+                                            <div className="weak-topics-preview">
+                                                <strong>Zayıf Konular:</strong>
+                                                <ul>
+                                                    {result.weak_topics?.slice(0, 3).map((topic, i) => (
+                                                        <li key={i}>{topic}</li>
+                                                    ))}
+                                                    {result.weak_topics?.length > 3 && <li>...</li>}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div className="result-footer">
+                                            <button className="view-details-btn" onClick={() => console.log('Detay görüntüleme yakında...')}>
+                                                Detayları Gör ➡️
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 
