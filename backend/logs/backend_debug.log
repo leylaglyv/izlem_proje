@@ -1,0 +1,465 @@
+2025-12-28 01:22:34,086 - backend_logger - INFO - [main.py:38] - Health check endpoint called
+2025-12-28 01:22:34,089 - backend_logger - INFO - [main.py:28] - Path: / Method: GET Status: 200 Time: 15.45ms
+2025-12-28 01:22:34,095 - backend_logger - INFO - [main.py:38] - Health check endpoint called
+2025-12-28 01:22:34,097 - backend_logger - INFO - [main.py:28] - Path: / Method: GET Status: 200 Time: 1.52ms
+2025-12-28 01:22:41,228 - backend_logger - INFO - [main.py:46] - Received analysis request for file: 5 KİŞİ2,1.pdf, content_type: application/pdf
+2025-12-28 01:22:41,231 - backend_logger - INFO - [main.py:55] - File read successfully. Size: 5282381 bytes
+2025-12-28 01:22:41,235 - backend_logger - INFO - [services.py:94] - --- Starting Analysis (Primary: gemini-2.5-flash) ---
+2025-12-28 01:22:42,704 - backend_logger - INFO - [services.py:87] - ✓ Converted 5 PDF pages to images.
+2025-12-28 01:22:45,163 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 1/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash
+please retry in 14.599470157s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 14
+}
+]
+2025-12-28 01:22:45,163 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 20s...
+2025-12-28 01:23:06,738 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 2/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash
+please retry in 53.038316532s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 53
+}
+]
+2025-12-28 01:23:06,738 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 40s...
+2025-12-28 01:23:48,310 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 3/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash
+please retry in 11.475027677s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 11
+}
+]
+2025-12-28 01:23:48,312 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 60s...
+2025-12-28 01:24:48,324 - backend_logger - ERROR - [services.py:139] - ❌ Primary Model (gemini-2.5-flash) Failed: Max retries exceeded for Gemini API.
+2025-12-28 01:24:48,334 - backend_logger - INFO - [services.py:142] - 🔄 Attempting Fallback to gemini-2.0-flash-exp...
+2025-12-28 01:24:49,903 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 1/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash-exp
+please retry in 9.867127026s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperminuteperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "generatecontentinputtokenspermodelperminute-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 9
+}
+]
+2025-12-28 01:24:49,903 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 20s...
+2025-12-28 01:25:11,539 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 2/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash-exp
+please retry in 48.212785905s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperminuteperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "generatecontentinputtokenspermodelperminute-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 48
+}
+]
+2025-12-28 01:25:11,539 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 40s...
+2025-12-28 01:25:59,278 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 3/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+please retry in 849.555508ms. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "generatecontentinputtokenspermodelperminute-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperminuteperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+}
+]
+2025-12-28 01:25:59,278 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 60s...
+2025-12-28 01:26:59,290 - backend_logger - ERROR - [services.py:148] - ❌ Fallback Model (gemini-2.0-flash-exp) Failed: Max retries exceeded for Gemini API.
+2025-12-28 01:26:59,296 - backend_logger - ERROR - [main.py:61] - Analysis returned empty results.
+2025-12-28 01:26:59,298 - backend_logger - ERROR - [main.py:72] - HTTP Exception during analysis: Öğrenci belgesi analiz edilemedi. AI servisi yoğun olabilir veya dosya okunamadı. Lütfen tekrar deneyin.
+2025-12-28 01:26:59,298 - backend_logger - INFO - [main.py:28] - Path: /api/analyze Method: POST Status: 500 Time: 258131.87ms
+2025-12-28 01:39:54,088 - backend_logger - INFO - [main.py:38] - Health check endpoint called
+2025-12-28 01:39:54,089 - backend_logger - INFO - [main.py:28] - Path: / Method: GET Status: 200 Time: 2.37ms
+2025-12-28 01:39:54,097 - backend_logger - INFO - [main.py:38] - Health check endpoint called
+2025-12-28 01:39:54,097 - backend_logger - INFO - [main.py:28] - Path: / Method: GET Status: 200 Time: 0.78ms
+2025-12-28 01:40:06,901 - backend_logger - INFO - [main.py:46] - Received analysis request for file: 5 KİŞİ2,1.pdf, content_type: application/pdf
+2025-12-28 01:40:06,907 - backend_logger - INFO - [main.py:55] - File read successfully. Size: 5282381 bytes
+2025-12-28 01:40:06,908 - backend_logger - INFO - [services.py:94] - --- Starting Analysis (Primary: gemini-2.5-flash) ---
+2025-12-28 01:40:08,279 - backend_logger - INFO - [services.py:87] - ✓ Converted 5 PDF pages to images.
+2025-12-28 01:40:13,553 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 1/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash
+please retry in 46.225050081s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 46
+}
+]
+2025-12-28 01:40:13,555 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 20s...
+2025-12-28 01:40:38,599 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 2/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash
+please retry in 21.203367883s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 21
+}
+]
+2025-12-28 01:40:38,599 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 40s...
+2025-12-28 01:41:20,687 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 3/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash
+please retry in 39.067414658s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-flash"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 20
+}
+, retry_delay {
+  seconds: 39
+}
+]
+2025-12-28 01:41:20,687 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 60s...
+2025-12-28 01:42:20,701 - backend_logger - ERROR - [services.py:139] - ❌ Primary Model (gemini-2.5-flash) Failed: Max retries exceeded for Gemini API.
+2025-12-28 01:42:20,703 - backend_logger - INFO - [services.py:142] - 🔄 Attempting Fallback to gemini-2.0-flash-exp...
+2025-12-28 01:42:22,635 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 1/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash-exp
+please retry in 37.151187071s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperminuteperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "generatecontentinputtokenspermodelperminute-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 37
+}
+]
+2025-12-28 01:42:22,637 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 20s...
+2025-12-28 01:42:46,231 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 2/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash-exp
+please retry in 13.520204287s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperminuteperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "generatecontentinputtokenspermodelperminute-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 13
+}
+]
+2025-12-28 01:42:46,233 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 40s...
+2025-12-28 01:43:28,753 - backend_logger - WARNING - [services.py:60] - Gemini Attempt 3/3 Failed: 429 you exceeded your current quota, please check your plan and billing details. for more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. to monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. 
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash-exp
+* quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash-exp
+please retry in 30.997234687s. [links {
+  description: "learn more about gemini api quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperdayperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "generaterequestsperminuteperprojectpermodel-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_input_token_count"
+  quota_id: "generatecontentinputtokenspermodelperminute-freetier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.0-flash-exp"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+}
+, retry_delay {
+  seconds: 30
+}
+]
+2025-12-28 01:43:28,758 - backend_logger - WARNING - [services.py:64] - ⚠️ Quota Exceeded. Sleeping 60s...
+2025-12-28 01:44:28,772 - backend_logger - ERROR - [services.py:148] - ❌ Fallback Model (gemini-2.0-flash-exp) Failed: Max retries exceeded for Gemini API.
+2025-12-28 01:44:28,772 - backend_logger - ERROR - [main.py:61] - Analysis returned empty results.
+2025-12-28 01:44:28,772 - backend_logger - ERROR - [main.py:72] - HTTP Exception during analysis: Öğrenci belgesi analiz edilemedi. AI servisi yoğun olabilir veya dosya okunamadı. Lütfen tekrar deneyin.
+2025-12-28 01:44:28,776 - backend_logger - INFO - [main.py:28] - Path: /api/analyze Method: POST Status: 500 Time: 261905.19ms

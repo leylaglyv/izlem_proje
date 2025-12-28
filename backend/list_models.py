@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 # Load .env from project root (one directory up from backend)
-dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
 api_key = os.getenv("GOOGLE_API_KEY")
@@ -13,8 +13,10 @@ else:
     genai.configure(api_key=api_key)
     try:
         print("Listing models...")
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                print(m.name)
+        with open("models_list.txt", "w") as f:
+            for m in genai.list_models():
+                if 'generateContent' in m.supported_generation_methods:
+                    print(m.name)
+                    f.write(m.name + "\n")
     except Exception as e:
         print(f"Error: {e}")

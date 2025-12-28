@@ -1,0 +1,9 @@
+Starting Gemini Diagnostic...
+Loading .env from: c:\Ampps\www\proje\backend\.env
+API Key found: AIzaS...45lXY
+GenAI Configured.
+Testing Simple Text Generation...
+Text Generation Error: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Testing Image Generation...
+Image Generation Error: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Diagnostic Complete.

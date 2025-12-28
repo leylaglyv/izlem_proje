@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UploadResults from './UploadResults';
 import ClassManagement from './ClassManagement';
+import ResultDetail from './ResultDetail';
 import './TeacherDashboard.css';
-import '../App.css'; // Re-using existing styles, can be separated if needed
+import '../App.css';
 
 const TeacherDashboard = ({ user, onLogout }) => {
-    const [activeTab, setActiveTab] = useState('home'); // 'home', 'upload', 'past', 'class'
+    const [activeTab, setActiveTab] = useState('home'); // 'home', 'upload', 'past', 'class', 'detail'
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedResult, setSelectedResult] = useState(null);
 
     const fetchResults = async () => {
         setLoading(true);
@@ -27,6 +29,16 @@ const TeacherDashboard = ({ user, onLogout }) => {
             fetchResults();
         }
     }, [activeTab]);
+
+    const handleViewDetail = (result) => {
+        setSelectedResult(result);
+        setActiveTab('detail');
+    };
+
+    const handleBackToList = () => {
+        setSelectedResult(null);
+        setActiveTab('past');
+    };
 
     return (
         <div className="dashboard-container fade-in">
@@ -47,7 +59,7 @@ const TeacherDashboard = ({ user, onLogout }) => {
                         Analiz Yükle
                     </button>
                     <button
-                        className={`dash-nav-btn ${activeTab === 'past' ? 'active' : ''}`}
+                        className={`dash-nav-btn ${(activeTab === 'past' || activeTab === 'detail') ? 'active' : ''}`}
                         onClick={() => setActiveTab('past')}
                     >
                         Önceki Analizler
@@ -111,18 +123,15 @@ const TeacherDashboard = ({ user, onLogout }) => {
                                         </div>
                                         <div className="result-body">
                                             <p><strong>Öğrenci No:</strong> {result.student_id || '-'}</p>
-                                            <div className="weak-topics-preview">
-                                                <strong>Zayıf Konular:</strong>
-                                                <ul>
-                                                    {result.weak_topics?.slice(0, 3).map((topic, i) => (
-                                                        <li key={i}>{topic}</li>
-                                                    ))}
-                                                    {result.weak_topics?.length > 3 && <li>...</li>}
-                                                </ul>
-                                            </div>
+                                            {/* Show Score Summary if available */}
+                                            {result.score_analysis && result.score_analysis.tyt_score && (
+                                                <div className="score-preview">
+                                                    <strong>Puan:</strong> {result.score_analysis.tyt_score}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="result-footer">
-                                            <button className="view-details-btn" onClick={() => console.log('Detay görüntüleme yakında...')}>
+                                            <button className="view-details-btn" onClick={() => handleViewDetail(result)}>
                                                 Detayları Gör ➡️
                                             </button>
                                         </div>
@@ -131,6 +140,10 @@ const TeacherDashboard = ({ user, onLogout }) => {
                             </div>
                         )}
                     </div>
+                )}
+
+                {activeTab === 'detail' && selectedResult && (
+                    <ResultDetail result={selectedResult} onBack={handleBackToList} />
                 )}
 
                 {activeTab === 'class' && (

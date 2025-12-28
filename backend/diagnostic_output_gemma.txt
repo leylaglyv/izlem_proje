@@ -1,0 +1,38 @@
+Starting Gemma Model Diagnostic...
+
+--- Testing Model: gemma-3-4b-it ---
+SUCCESS: gemma-3-4b-it responded: Okay! I see you've sent a "Test." 
+
+I'm here and ready. Do you want me to:
+
+*   **Respond to you?** (Just say something!)
+*   **Perform a specific task?** (Like write a poem, answer a question, or summarize something?)
+*   **Just confirm that I'm working?** (I'm responding!)
+
+--- Testing Model: gemma-3-1b-it ---
+SUCCESS: gemma-3-1b-it responded: Okay, I see you've just typed "Test". 
+
+Is there anything specific you'd like me to do? For example, are you:
+
+*   **Testing a function?** (If so, please tell me what the function does!)
+*   **Just testing the connection?** (I'm functioning as expected.)
+*   **Something else entirely?** 
+
+Let me know! 😊
+
+--- Testing Model: gemma-3-12b-it ---
+SUCCESS: gemma-3-12b-it responded: Okay! I see your "Test" message. 
+
+This confirms I'm receiving and processing your input. 😊 
+
+Do you want to test something specific? Let me know what you'd like me to do! For example:
+
+*   **Ask me a question:** "What is the capital of France?"
+*   **Give me a task:** "Write a short poem about cats."
+*   **Just chat:** "Tell me a joke."
+
+
+
+I'm ready for your next instruction!
+
+Diagnostic Complete.

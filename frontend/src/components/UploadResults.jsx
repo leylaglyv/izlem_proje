@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import './UploadResults.css';
 
@@ -10,6 +10,27 @@ function UploadResults() {
     const [loading, setLoading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef(null);
+
+    // Debug & Connectivity States
+    const [technicalDetails, setTechnicalDetails] = useState(null);
+    const [showDetails, setShowDetails] = useState(false);
+    const [serverStatus, setServerStatus] = useState('checking'); // checking, online, offline
+
+    // Check backend connectivity on mount
+    useEffect(() => {
+        const checkServer = async () => {
+            try {
+                await axios.get('http://localhost:8000/');
+                setServerStatus('online');
+                console.log("Backend connection established.");
+            } catch (error) {
+                console.error("Server connectivity check failed:", error);
+                setServerStatus('offline');
+                setMessage('⚠️ Uyarı: Backend sunucusuna erişilemiyor. Lütfen sunucunun (start_backend.bat) çalıştığından emin olun.');
+            }
+        };
+        checkServer();
+    }, []);
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -51,7 +72,7 @@ function UploadResults() {
 
         try {
             // Şimdilik sadece dosyayı gönderiyoruz, backend güncellenince metadata da ekleriz.
-            const response = await axios.post('http://localhost:8001/api/analyze', formData, {
+            const response = await axios.post('http://localhost:8000/api/analyze', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -62,7 +83,34 @@ function UploadResults() {
             setExamName('');
         } catch (error) {
             console.error('Upload Error:', error);
-            setMessage('Bir hata oluştu: ' + (error.response?.data?.detail || error.message));
+
+            // Build technical details object
+            const details = {
+                message: error.message,
+                code: error.code,
+                config: {
+                    url: error.config?.url,
+                    method: error.config?.method,
+                    headers: error.config?.headers
+                },
+                response: error.response ? {
+                    status: error.response.status,
+                    data: error.response.data,
+                    headers: error.response.headers
+                } : 'No response received (Network Error or Timeout)'
+            };
+            setTechnicalDetails(JSON.stringify(details, null, 2));
+
+            // User friendly message
+            let userMsg = 'Bir hata oluştu.';
+            if (error.response) {
+                userMsg += ` Sunucu Hatası (${error.response.status}): ${error.response.data?.detail || error.message}`;
+            } else if (error.request) {
+                userMsg += ' Sunucudan yanıt alınamadı. İnternet bağlantınızı ve backend sunucusunu kontrol edin.';
+            } else {
+                userMsg += ` İstek hatası: ${error.message}`;
+            }
+            setMessage(userMsg);
         } finally {
             setLoading(false);
         }
@@ -136,7 +184,45 @@ function UploadResults() {
 
                 {message && (
                     <div className={`status-message ${message.includes('Başarılı') ? 'success' : 'error'} fade-in`}>
-                        {message}
+                        {serverStatus === 'offline' && <div className="server-offline-badge">⛔ SUNUCU BAĞLANTISI YOK</div>}
+                        <p>{message}</p>
+
+                        {technicalDetails && (
+                            <div className="technical-details-container" style={{ marginTop: '15px', textAlign: 'left', borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '10px' }}>
+                                <button
+                                    onClick={() => setShowDetails(!showDetails)}
+                                    style={{
+                                        fontSize: '0.85rem',
+                                        textDecoration: 'underline',
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#fff',
+                                        cursor: 'pointer',
+                                        padding: 0,
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    {showDetails ? '▼ Teknik Detayları Gizle' : '▶ Teknik Detayları Göster (Debug)'}
+                                </button>
+                                {showDetails && (
+                                    <pre style={{
+                                        background: 'rgba(0,0,0,0.3)',
+                                        padding: '10px',
+                                        borderRadius: '5px',
+                                        fontSize: '0.75rem',
+                                        overflowX: 'auto',
+                                        marginTop: '10px',
+                                        maxHeight: '200px',
+                                        overflowY: 'auto',
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word',
+                                        fontFamily: 'monospace'
+                                    }}>
+                                        {technicalDetails}
+                                    </pre>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

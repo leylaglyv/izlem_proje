@@ -4,19 +4,31 @@ import PIL.Image
 import google.generativeai as genai
 from dotenv import load_dotenv
 import json
-import typing_extensions
 import time
+import io
+import typing_extensions
 from firebase_admin import firestore
 from firebase_config import db
+from logger import logger  # IMPORT LOGGER
 
-# Load .env from project root
-dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+# Load .env
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    logger.critical("GOOGLE_API_KEY is missing in .env")
+
 genai.configure(api_key=GOOGLE_API_KEY)
 
-# Define the schema for structured output
+# --- CONFIGURATION ---
+# Updated based on available models list
+# Updated based on available models list and quota exhaustion on 2.0
+PRIMARY_MODEL = 'gemini-2.5-flash' 
+FALLBACK_MODEL = 'gemini-2.0-flash-exp' 
+MAX_RETRIES = 3
+RETRY_DELAY = 20 # Increased delay 
+
 class SubjectResult(typing_extensions.TypedDict):
     subject: str
     D: int
@@ -26,183 +38,160 @@ class SubjectResult(typing_extensions.TypedDict):
 class StudentResult(typing_extensions.TypedDict):
     student_name: str
     student_id: str
+    student_class: str
     results: list[SubjectResult]
-    weak_topics: list[str]
+    score_analysis: dict
+    topic_analysis: dict
+    comparison: dict
     suggestion: str
 
-def extract_text_from_pdf(pdf_bytes: bytes) -> str:
-    """
-    Extracts text from all pages of the PDF.
-    """
-    text_content = ""
-    try:
-        with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
-            for page in doc:
-                text_content += page.get_text() + "\n"
-    except Exception as e:
-        print(f"Error extracting text: {e}")
-    return text_content.strip()
+# --- CORE FUNCTIONS ---
 
-    """
-    Analyzes the extracted text using Gemini.
-    """
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    
-    prompt = """
-    Aşağıdaki metin bir sınav sonuç belgesinden (PDF) elde edilmiştir. Bu metni analiz et ve istene verileri JSON formatında çıkar.
+def get_gemini_model(model_name=PRIMARY_MODEL):
+    return genai.GenerativeModel(model_name)
 
-    METİN:
-    """ + text_content + """
-
-    İSTENENLER:
-    1. Öğrenci Adı ve Numarasını bul.
-    2. Tablodaki dersleri (Matematik, Türkçe, Fen, Sosyal vb.) bul.
-    3. Her ders için Doğru (D), Yanlış (Y) ve Net (N) sayılarını çıkar.
-    4. **ÖNEMLİ:** Yanlış yapılan soruların hangi TEORİK KONULARA (Örn: Üslü Sayılar, Yazım Kuralları, Elektrik vb.) ait olduğunu tespit et. Eğer belgede konu yazmıyorsa, sorunun içeriğinden veya genel analizden tahmin et.
-    5. 'suggestion' alanına öğrenciye özel, motive edici kısa bir tavsiye yaz.
-
-    ÇIKTI FORMATI (JSON Listesi):
-    [
-        {
-            "student_name": "Ad Soyad",
-            "student_id": "No",
-            "results": [
-                {"subject": "Ders Adı", "D": 30, "Y": 5, "N": 28.75}
-            ],
-            "weak_topics": ["Konu 1 (Yanlış)", "Konu 2 (Boş)"],
-            "suggestion": "Tavsiye metni..."
-        }
-    ]
-    Eğer metin anlamsızsa veya sınav sonucu içermiyorsa boş liste [] döndür.
-    """
-
+def generate_with_retry(model, content, config):
     retries = 0
-    max_retries = 3
-    
-    while retries < max_retries:
+    while retries < MAX_RETRIES:
         try:
-            response = model.generate_content(
-                prompt,
-                generation_config=genai.GenerationConfig(
-                    response_mime_type="application/json"
-                )
-            )
-            return json.loads(response.text)
+            return model.generate_content(content, generation_config=config)
         except Exception as e:
-            error_str = str(e)
-            if "429" in error_str or "quota" in error_str.lower():
-                print(f"Rate limit exceeded. Retrying in 30 seconds... ({retries+1}/{max_retries})")
-                time.sleep(30)
+            error_str = str(e).lower()
+            logger.warning(f"Gemini Attempt {retries+1}/{MAX_RETRIES} Failed: {error_str}")
+            
+            if "429" in error_str or "quota" in error_str or "resource exhausted" in error_str:
+                sleep_time = RETRY_DELAY * (retries + 1)
+                logger.warning(f"⚠️ Quota Exceeded. Sleeping {sleep_time}s...")
+                time.sleep(sleep_time)
                 retries += 1
+            elif "404" in error_str or "not found" in error_str:
+                logger.error("Model not found (404). Stopping retries for this model.")
+                raise e # Let caller handle fallback
             else:
-                print(f"Gemini Text Analysis Error: {e}")
-                return []
-    
-    print("Max retries reached for Text Analysis.")
-    return []
+                logger.error(f"Non-retriable error: {e}")
+                raise e
+                
+    raise Exception("Max retries exceeded for Gemini API.")
 
-def analyze_first_page_image_fallback(pdf_bytes: bytes) -> list[StudentResult]:
-    """
-    Fallback: Converts ONLY the first page to image and analyzes it.
-    Used when text extraction fails.
-    """
+def convert_pdf_to_images(pdf_bytes: bytes, max_pages: int = 5) -> list[PIL.Image.Image]:
+    images = []
     try:
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-        if len(doc) < 1:
-            return []
-        
-        page = doc.load_page(0)
-        pix = page.get_pixmap()
-        img_data = pix.tobytes("png")
-        
-        # Save temp file for Gemini (Image object needs path or bytes)
-        # Using PIL directly from bytes is safer for memory
-        import io
-        image = PIL.Image.open(io.BytesIO(img_data))
-        
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        prompt = "Bu sınav sonuç belgesini analiz et. Öğrenci adı, ders netleri ve zayıf konuları JSON olarak çıkar."
-        
-        retries = 0
-        max_retries = 3
-        
-        while retries < max_retries:
-            try:
-                response = model.generate_content(
-                    [prompt, image],
-                    generation_config=genai.GenerationConfig(
-                        response_mime_type="application/json"
-                    )
-                )
-                return json.loads(response.text)
-            except Exception as e:
-                error_str = str(e)
-                if "429" in error_str or "quota" in error_str.lower():
-                    print(f"Fallback Image Rate Limit. Retrying in 30 seconds... ({retries+1}/{max_retries})")
-                    time.sleep(30)
-                    retries += 1
-                else:
-                    print(f"Image Fallback Error: {e}")
-                    return []
-        return []
-        
+        for i, page in enumerate(doc):
+            if i >= max_pages: 
+                break
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) 
+            img_data = pix.tobytes("png")
+            image = PIL.Image.open(io.BytesIO(img_data))
+            images.append(image)
+        logger.info(f"✓ Converted {len(images)} PDF pages to images.")
+        return images
     except Exception as e:
-        print(f"Image Fallback Error: {e}")
+        logger.error(f"❌ Error converting PDF to images: {e}")
         return []
 
-def analyze_pdf_robust(pdf_bytes: bytes) -> list[StudentResult]:
-    """
-    Main analysis function.
-    1. Tries to extract text.
-    2. If text is sufficient, analyzes text.
-    3. If text is empty/insufficient, falls back to first page image analysis.
-    """
-    print("Starting robust analysis...")
+def analyze_exam_results(pdf_bytes: bytes) -> list[dict]:
+    logger.info(f"--- Starting Analysis (Primary: {PRIMARY_MODEL}) ---")
     
-    # 1. Try Text Extraction
-    text = extract_text_from_pdf(pdf_bytes)
-    print(f"Extracted text length: {len(text)}")
-    
-    # 2. Analyze Text if valid
-    if len(text) > 50: # Arbitrary threshold for "valid content"
-        print("Text found. Analyzing with Gemini (Text Mode)...")
-        results = analyze_text_with_gemini(text)
-        if results:
-            return results
-        print("Text analysis returned empty. Trying fallback...")
-    
-    # 3. Fallback to Image (First Page Only)
-    print("Text extraction failed or insuficient. Falling back to Image Analysis (Page 1)...")
-    return analyze_first_page_image_fallback(pdf_bytes)
+    images = convert_pdf_to_images(pdf_bytes)
+    if not images:
+        return []
 
-def save_results_to_firestore(results: list[StudentResult]):
-    """
-    Saves the analyzed results to Firestore.
-    """
-    if not results:
-        return
+    prompt = """
+    Sen uzman bir eğitim analistisin. Görevin, sana verilen Sınav Sonuç Belgesi (veya Karne) görsellerini analiz ederek, öğrencinin performansını en ince detayına kadar çıkarmaktır.
 
-    batch = db.batch()
+    **GÖREVLER:**
+    1. **Kimlik Bilgileri:** Öğrenci Adı, Numarası, Sınıfı.
+    2. **Ders Bazlı Performans:** Tablodaki her bir ders için Doğru (D), Yanlış (Y) ve Net (N) sayılarını eksiksiz çıkar. Sütun kaymalarına dikkat et.
+    3. **Puan Analizi:** TYT veya ilgili sınav puanını, genel/ilçe/kurum sıralamalarını bul.
+    4. **Konu Analizi (Çok Önemli):**
+       - 'Konu Analizi' veya benzeri tablolarda, öğrencinin hangi konuda hata yaptığını (Yanlış > 0 veya Boş) tespit et (Hatalı/Eksik Konular).
+       - Başarılı olduğu konuları tespit et.
+    5. **Tavsiye:** Öğrencinin eksik olduğu konulara göre ona özel, yapıcı ve "şu konulara çalışmalısın" diyen bir tavsiye yazısı yaz.
+
+    **ÇIKTI FORMATI (JSON):**
+    Yanıtın SADECE geçerli bir JSON array olmalı. Markdown (```json ... ```) kullanma.
+    Format:
+    [
+        {
+            "student_name": "...",
+            "student_id": "...",
+            "student_class": "...",
+            "results": [{"subject": "M...", "D": 0, "Y": 0, "N": 0}],
+            "score_analysis": {"tyt_score": 0, "general_rank": 0},
+            "topic_analysis": {"successful_topics": [], "failed_topics": [], "weak_topics": []},
+            "comparison": {"general_comments": "..."},
+            "suggestion": "..."
+        }
+    ]
+    """
+
+    generation_config = genai.GenerationConfig(
+        response_mime_type="application/json"
+    )
+
+    # 1. Try Primary Model
+    try:
+        model = get_gemini_model(PRIMARY_MODEL)
+        response = generate_with_retry(model, [prompt] + images, generation_config)
+        return process_response(response)
+    except Exception as e:
+        logger.error(f"❌ Primary Model ({PRIMARY_MODEL}) Failed: {e}")
+        
+        # 2. Try Fallback Model
+        logger.info(f"🔄 Attempting Fallback to {FALLBACK_MODEL}...")
+        try:
+            model = get_gemini_model(FALLBACK_MODEL)
+            response = generate_with_retry(model, [prompt] + images, generation_config)
+            return process_response(response)
+        except Exception as e2:
+            logger.error(f"❌ Fallback Model ({FALLBACK_MODEL}) Failed: {e2}")
+            return []
+
+def process_response(response):
+    try:
+        text_response = response.text.strip()
+        if text_response.startswith("```json"):
+            text_response = text_response[7:]
+        if text_response.endswith("```"):
+            text_response = text_response[:-3]
+            
+        data = json.loads(text_response)
+        save_results_to_firestore(data)
+        return data
+    except Exception as e:
+        logger.error(f"JSON Parsing Error: {e}. Content: {response.text[:100]}...")
+        return []
+
+def save_results_to_firestore(results: list[dict]):
+    if not results: return
     
-    for result in results:
-        doc_ref = db.collection("exam_results").document()
-        doc_data = result.copy()
-        doc_data["created_at"] = firestore.SERVER_TIMESTAMP
-        batch.set(doc_ref, doc_data)
-
-    batch.commit()
-    print(f"Saved {len(results)} results to Firestore.")
+    try:
+        batch = db.batch()
+        for result in results:
+            doc_ref = db.collection("exam_results").document()
+            doc_data = result.copy()
+            doc_data["created_at"] = firestore.SERVER_TIMESTAMP
+            batch.set(doc_ref, doc_data)
+        batch.commit()
+        logger.info(f"✓ Saved {len(results)} results to Firestore.")
+    except Exception as e:
+        logger.error(f"❌ Firestore Save Error: {e}")
 
 def get_all_results_from_firestore():
+    """
+    Retrieves all exam results.
+    """
     try:
         docs = db.collection("exam_results").order_by("created_at", direction=firestore.Query.DESCENDING).stream()
         results = []
         for doc in docs:
             data = doc.to_dict()
             if 'created_at' in data and data['created_at']:
-                 data['created_at'] = data['created_at'].isoformat()
+                # Convert datetime to ISO string
+                data['created_at'] = data['created_at'].isoformat()
             results.append(data)
         return results
     except Exception as e:
-        print(f"Error fetching results: {e}")
+        logger.error(f"Error fetching results: {e}")
         return []
